@@ -1,5 +1,5 @@
 #
-# home_2X8 controller 20.2.2023
+# home_2X8 controller 4.8.2023
 # hardware: ESP8266, 4 buttons, 2x LED 8 digits
 # firmware: 12.4.0.2(home_display_ir)
 # for productions run inside ha-appdaemon add-on
@@ -127,6 +127,8 @@ class Home2x8(hass.Hass):
         # meteo events
         self.meteoText = METEO_TEXT[self.get_state(METEO_STATE)]
         self.listen_event(self.meteoEvent, 'state_changed', entity_id=METEO_EVENT)
+        # illuminance event
+        self.listen_event(self.illuminanceEvent, 'state_changed', entity_id=LUX_ID)
 
     def mqttEvent(self, event_name, data, *args, **kwargs):
         pld = json.loads(data['payload'])
@@ -251,6 +253,14 @@ class Home2x8(hass.Hass):
             value = f"{self.meteoText}{METEO_TEXT['unavailable']}"
         else:
             value = f"{self.meteoText} {float(device_tc_ext.get_state()):.1f}"
+        #
+        device_lux_ext = self.get_entity(LUX_ID)
+        value_lux_ext = device_lux_ext.get_state()
+        if value_lux_ext == 'unavailable':
+            value += f"{METEO_TEXT['unavailable']}{' _' if self.meteoHoldOption else ''}"
+        else:
+            value += f"{float(value_lux_ext):g}{' _' if self.meteoHoldOption else ''}"
+        # display update
         self.mqtt.mqtt_publish(TOPIC_HOME_BOX_CMND_DISPLAY_TEXT, value)
 
     def powerMeterEvent(self, event_name, data, *args, **kwargs):
@@ -264,3 +274,6 @@ class Home2x8(hass.Hass):
         except KeyError:
             self.meteoText = METEO_TEXT['unavailable']
         self.meteoDisplay()
+
+    def illuminanceEvent(self, event_name, data, *args, **kwargs):
+        return self.meteoEvent(self, event_name, data, *args, **kwargs)
