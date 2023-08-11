@@ -270,10 +270,10 @@ class Home2x8(hass.Hass):
 
     def meteoEvent(self, event_name, data, *args, **kwargs):
         try:
-            self.meteoText = METEO_TEXT.get(args[0]['new_state']['state'])
+            self.meteoText = METEO_TEXT[data['new_state']['state']]
         except KeyError:
             self.meteoText = METEO_TEXT['unavailable']
         self.meteoDisplay()
 
     def illuminanceEvent(self, event_name, data, *args, **kwargs):
-        return self.meteoEvent(self, event_name, data, *args, **kwargs)
+        self.meteoDisplay()
