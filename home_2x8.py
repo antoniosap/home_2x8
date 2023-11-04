@@ -253,7 +253,8 @@ class Home2x8(hass.Hass):
         if value_tc_ext == 'unavailable':
             value = f"{self.meteoText}{METEO_TEXT['unavailable']}"
         else:
-            value = f"{self.meteoText} {float(device_tc_ext.get_state()):.1f}"
+            # https://docs.python.org/3/library/string.html
+            value = f"{self.meteoText} {float(device_tc_ext.get_state()):>4.1f}"
         #
         device_lux_ext = self.get_entity(LUX_ID)
         value_lux_ext = device_lux_ext.get_state()
