@@ -29,6 +29,8 @@ POWER_METER_EVENT = "sensor.total_watt"
 # TC_EXTERNAL_ID = "sensor.ewelink_th01_b0071325_temperature"  # guasto 4.9.2023
 # TC_EXTERNAL_ID = "sensor.sonoff_th_am2301_temperature"       # dal 2.12.2023 è il sensore bagno
 TC_EXTERNAL_ID = "sensor.sht41_sn2_sht4x_temperature"          # nuovo sensore di precisione per esterno
+TC_BATHROOM_ID = "sensor.sonoff_th_am2301_temperature"
+RH_BATHROOM_ID = "sensor.sonoff_th_am2301_humidity"
 METEO_EVENT = "weather.casatorino2022"
 METEO_STATE = METEO_EVENT
 BOILER_STATE = "switch.boiler"
@@ -229,19 +231,35 @@ class Home2x8(hass.Hass):
         self.mqtt.mqtt_publish(TOPIC_HOME_BOX_CMND_DISPLAY_CLOCK, 2)
 
     def co2LuxDisplay(self):
-        device_co2 = self.get_entity(CO2_ID)
-        value_co2 = device_co2.get_state()
         value = ''
-        if value_co2 == 'unavailable':
-            value += f"CO2 {METEO_TEXT['unavailable']}"
+        # device_co2 = self.get_entity(CO2_ID)
+        # value_co2 = device_co2.get_state()
+        # if value_co2 == 'unavailable':
+        #     value += f"CO2 {METEO_TEXT['unavailable']}"
+        # else:
+        #     value += f"CO2 {float(device_co2.get_state()):.0f} PPM"
+        # #
+        # device_lux = self.get_entity(LUX_ID)
+        # value_lux = device_lux.get_state()
+        # if value_lux == 'unavailable':
+        #     value += f" ILL {METEO_TEXT['unavailable']} LX"
+        # else:
+        #     value += f" ILL {float(device_lux.get_state()):g} LX"
+        # #
+        device_tc = self.get_entity(TC_BATHROOM_ID)
+        value_tc = device_tc.get_state()
+        if value_tc == 'unavailable':
+            value += f" BAGNO TC {METEO_TEXT['unavailable']}"
         else:
-            value += f"CO2 {float(device_co2.get_state()):.0f} PPM"
-        device_lux = self.get_entity(LUX_ID)
-        value_lux = device_lux.get_state()
-        if value_lux == 'unavailable':
-            value += f" ILL {METEO_TEXT['unavailable']} LX"
+            value += f" BAGNO TC {float(value_tc):.1f} C"
+        #
+        device_hr = self.get_entity(RH_BATHROOM_ID)
+        value_hr = device_hr.get_state()
+        if value_hr == 'unavailable':
+            value += f" HU {METEO_TEXT['unavailable']}"
         else:
-            value += f" ILL {float(device_lux.get_state()):g} LX"
+            value += f" HU {float(value_hr):.0f} RH"
+        #
         self.mqtt.mqtt_publish(TOPIC_HOME_BOX_CMND_DISPLAY_SCROLL, value)
 
     def powerMeterDisplay(self):
