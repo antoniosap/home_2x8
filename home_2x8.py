@@ -133,6 +133,9 @@ class Home2x8(hass.Hass):
         self.listen_event(self.meteoEvent, 'state_changed', entity_id=METEO_EVENT)
         # illuminance event
         self.listen_event(self.illuminanceEvent, 'state_changed', entity_id=LUX_ID)
+        # bathroom events
+        self.listen_event(self.bathroomEvent, 'state_changed', entity_id=TC_BATHROOM_ID)
+        self.listen_event(self.bathroomEvent, 'state_changed', entity_id=RH_BATHROOM_ID)
 
     def mqttEvent(self, event_name, data, *args, **kwargs):
         pld = json.loads(data['payload'])
@@ -298,3 +301,21 @@ class Home2x8(hass.Hass):
 
     def illuminanceEvent(self, event_name, data, *args, **kwargs):
         self.meteoDisplay()
+
+    def bathroomEvent(self, event_name, data, *args, **kwargs):
+        value = ''
+        device_tc = self.get_entity(TC_BATHROOM_ID)
+        value_tc = device_tc.get_state()
+        if value_tc == 'unavailable':
+            value += f"BAGN{METEO_TEXT['unavailable']}"
+        else:
+            value += f"BAGN {float(value_tc):.1f}"
+        #
+        device_hr = self.get_entity(RH_BATHROOM_ID)
+        value_hr = device_hr.get_state()
+        if value_hr == 'unavailable':
+            value += f"HU  {METEO_TEXT['unavailable']}"
+        else:
+            value += f"HU  {float(value_hr):.0f}"
+        # display update
+        self.mqtt.mqtt_publish(TOPIC_HOME_BOX_CMND_DISPLAY_TEXT, value)
