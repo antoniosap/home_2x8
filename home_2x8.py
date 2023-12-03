@@ -266,7 +266,7 @@ class Home2x8(hass.Hass):
         self.mqtt.mqtt_publish(TOPIC_HOME_BOX_CMND_DISPLAY_SCROLL, value)
 
     def powerMeterDisplay(self):
-        value = f"P {float(self.totalW):.0f}"
+        value = f"POT {float(self.totalW):.0f}"
         self.mqtt.mqtt_publish(TOPIC_HOME_BOX_CMND_DISPLAY_TEXT, value)
 
     def meteoDisplay(self):
