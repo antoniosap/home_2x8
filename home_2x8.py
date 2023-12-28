@@ -261,7 +261,7 @@ class Home2x8(hass.Hass):
         if value_hr == 'unavailable':
             value += f" HU {METEO_TEXT['unavailable']}"
         else:
-            value += f" HU {float(value_hr):.0f} RH"
+            value += f" HU {float(value_hr):.1f} RH"
         #
         self.mqtt.mqtt_publish(TOPIC_HOME_BOX_CMND_DISPLAY_SCROLL, value)
 
@@ -316,6 +316,6 @@ class Home2x8(hass.Hass):
         if value_hr == 'unavailable':
             value += f"HU  {METEO_TEXT['unavailable']}"
         else:
-            value += f"HU  {float(value_hr):.0f}"
+            value += f"HU  {float(value_hr):.1f}"
         # display update
         self.mqtt.mqtt_publish(TOPIC_HOME_BOX_CMND_DISPLAY_TEXT, value)
