@@ -281,9 +281,9 @@ class Home2x8(hass.Hass):
         device_lux_ext = self.get_entity(LUX_ID)
         value_lux_ext = device_lux_ext.get_state()
         if value_lux_ext == 'unavailable':
-            value += f"{METEO_TEXT['unavailable']}{' _' if self.meteoHoldOption else ''}"
+            value += f"{METEO_TEXT['unavailable']}{'_' if self.meteoHoldOption else ''}"
         else:
-            value += f"{float(value_lux_ext):g}{' _' if self.meteoHoldOption else ''}"
+            value += f"LU {float(value_lux_ext):g}{'_' if self.meteoHoldOption else ''}"
         # display update
         self.mqtt.mqtt_publish(TOPIC_HOME_BOX_CMND_DISPLAY_TEXT, value)
 
